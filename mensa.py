@@ -7,14 +7,7 @@ from colorama import Style
 from datetime import datetime
 from contextlib import contextmanager
 
-
-@contextmanager
-def setlocale(name):
-    saved = locale.setlocale(locale.LC_ALL)
-    try:
-        yield locale.setlocale(locale.LC_ALL, name)
-    finally:
-        locale.setlocale(locale.LC_ALL, saved)
+locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
 
 with urllib.request.urlopen("https://www.studierendenwerk-kaiserslautern.de/kaiserslautern/essen-und-trinken/tu-kaiserslautern/mensa/") as response:
     page =  response.read()
@@ -22,11 +15,10 @@ page_soup = BeautifulSoup(page, "html.parser")
 daily_contents = page_soup.findAll('div', {'class' : 'dailyplan_content'})
 
 for daily_content in daily_contents:
-    with setlocale('de_DE.UTF-8'):
-        date = datetime.strptime(daily_content.h5.text, '%A, %d.%m.%Y')
+    date = datetime.strptime(daily_content.h5.text, '%A, %d.%m.%Y')
     if date.date() == datetime.today().date():
         print(Style.BRIGHT)
-    print("=======================================\n")
+    print("=======================================")
     print(daily_content.h5.text)
     rows = daily_content.findAll('div', {'class': 'subcolumns'})
     for row in rows:
@@ -42,5 +34,4 @@ for daily_content in daily_contents:
                 pass
 
         print('\t'.join([location.strong.text] + ['\n\t'.join(foodlist)]))
-    print(Style.RESET_ALL)
-print("=======================================")
+    print("=======================================" + Style.RESET_ALL)
