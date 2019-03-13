@@ -77,7 +77,7 @@ def print_day(daily_content, is_today=False, vegetarian=False):
             for food in foods:
                 try:
                     if food.text:
-                        if re.findall(r',V,|\(V|V\)',food.text):
+                        if re.findall(r',V,|\(V|V\)', food.text):
                             foodlist.append(Fore.GREEN + food.text + Fore.RESET)
                         elif not vegetarian:
                             foodlist.append(food.text)
@@ -87,21 +87,16 @@ def print_day(daily_content, is_today=False, vegetarian=False):
                 print('\t'.join([location.strong.text] + ['\n\t'.join(foodlist)]))
 
 @click.command()
-@click.option('--today', is_flag=True, help="List the food for the current day")
 @click.option('--week', is_flag=True, help="List the food for the current week")
 @click.option('--vegetarian', is_flag=True, help="Only list vegetarian options")
-def mensa(today: bool = False, week: bool = False, vegetarian: bool = False):
+def mensa(week: bool = False, vegetarian: bool = False):
     """Query the webpage of the TUKL mensa and print the daily plans to the terminal
     """
-
-    if not week and not today:
-        click.echo(click.get_current_context().get_help())
-        return
     page_soup = BeautifulSoup(get_mensakl_page(), "html.parser")
     for day in page_soup.findAll('div', {'class' : 'dailyplan_content'}):
         date_text = re.findall(r'\d+.\d+.\d+', day.h5.text)[0]
         date = datetime.strptime(date_text, '%d.%m.%Y')
-        if date.date() == datetime.today().date() and (week or today):
+        if date.date() == datetime.today().date():
             print_day(day, is_today=True, vegetarian=vegetarian)
         elif week:
             print_day(day, is_today=False, vegetarian=vegetarian)
