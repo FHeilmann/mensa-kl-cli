@@ -12,7 +12,7 @@ from contextlib import contextmanager
 import click
 from halo import Halo
 from bs4 import BeautifulSoup
-from colorama import Style, Fore
+from colorama import Style, Fore, init
 
 MENSA_URL = "https://www.studierendenwerk-kaiserslautern.de/kaiserslautern" + \
             "/essen-und-trinken/tu-kaiserslautern/mensa/"
@@ -109,6 +109,7 @@ def print_day(daily_content, is_today=False, vegetarian=False):
 def mensa(week: bool = False, vegetarian: bool = False):
     """Query the webpage of the TUKL mensa and print the daily plans to the terminal
     """
+    init()
     page = get_mensakl_page()
     if not page:
         print("ERROR: Could not find mensa kl page in cache, and couldn't" +
